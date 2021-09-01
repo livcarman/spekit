@@ -38,3 +38,7 @@ class Folder(MP_Node):
 
     def __str__(self):
         return f"Folder: {self.name}"
+
+    class Meta:
+        verbose_name = _("Folder")
+        verbose_name_plural = _("Folders")
