@@ -1,7 +1,6 @@
 import json
 from django.test import TestCase
 from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APIClient as Client
 from rest_framework.authtoken.models import Token
 from freezegun import freeze_time
