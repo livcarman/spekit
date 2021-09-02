@@ -14,6 +14,9 @@ import os
 import sys
 from pathlib import Path
 
+import dj_database_url
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,16 +86,21 @@ WSGI_APPLICATION = 'spekit.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("DATABASE_BACKEND", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / 'db.sqlite3'),
-        "USER": os.environ.get("POSTGRES_USER", ""),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
-        "HOST": os.environ.get("POSTGRES_HOST", ""),
-        "PORT": os.environ.get("POSTGRES_PORT", ""),
+if os.environ.get("DATABASE_URL", None):
+    DATABASES = {
+        "default": dj_database_url.config(conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("DATABASE_BACKEND", "django.db.backends.sqlite3"),
+            "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / 'db.sqlite3'),
+            "USER": os.environ.get("POSTGRES_USER", ""),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
+            "HOST": os.environ.get("POSTGRES_HOST", ""),
+            "PORT": os.environ.get("POSTGRES_PORT", ""),
+        }
+    }
 
 
 # Password validation
