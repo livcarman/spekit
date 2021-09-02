@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from documents.models import Folder
+from documents.models import Document, Folder
 
 
 class FolderSerializer(serializers.ModelSerializer):
@@ -78,6 +78,24 @@ class FolderSerializer(serializers.ModelSerializer):
             'long_description',
             'parent',
             'children',
+            'created_at',
+            'updated_at'
+        ]
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+    folder = serializers.PrimaryKeyRelatedField(
+        queryset=Folder.objects.all()
+    )
+
+    class Meta:
+        model = Document
+        fields = [
+            'id',
+            'name',
+            'long_description',
+            'folder',
+            'file',
             'created_at',
             'updated_at'
         ]

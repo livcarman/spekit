@@ -167,7 +167,7 @@ class FolderApiFilterTestCase(FolderApiTestCase):
         self.assertEqual(json_resp["count"], 1)
         self.assertEqual(json_resp["results"][0]["id"], str(self.root_folder.pk))
 
-    def test_filter_updated_ad(self):
+    def test_filter_updated_at(self):
         response = self.client.get(f"{self.url}?updated_at_before=2020-09-01T19:58:21.942889Z")
         json_resp = json.loads(response.content)
         self.assertEqual(json_resp["count"], 1)

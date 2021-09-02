@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,7 +85,7 @@ WSGI_APPLICATION = 'spekit.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3"),
+        "ENGINE": os.environ.get("DATABASE_BACKEND", "django.db.backends.sqlite3"),
         "NAME": os.environ.get("POSTGRES_DB", BASE_DIR / 'db.sqlite3'),
         "USER": os.environ.get("POSTGRES_USER", ""),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
@@ -160,3 +161,21 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
+
+
+# Django Storages
+# https://django-storages.readthedocs.io
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", None)
+
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", None)
+
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+
+if 'test' in sys.argv:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'

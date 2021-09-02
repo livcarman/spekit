@@ -43,7 +43,7 @@ RUN set -ex \
     && apk del .build-deps
 
 # Install run deps
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache expat postgresql-client
 
 # Copy application code to the container
 COPY . /usr/src/app

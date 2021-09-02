@@ -1,7 +1,7 @@
 import django_filters
 from django.core.exceptions import ObjectDoesNotExist
 
-from documents.models import Folder
+from documents.models import Document, Folder
 
 
 class FolderFilter(django_filters.FilterSet):
@@ -30,6 +30,22 @@ class FolderFilter(django_filters.FilterSet):
             'id',
             'name',
             'parent',
+            'created_at',
+            'updated_at'
+        ]
+
+
+class DocumentFilter(django_filters.FilterSet):
+    folder_id = django_filters.UUIDFilter(field_name='folder__pk', lookup_expr='exact')
+    created_at = django_filters.IsoDateTimeFromToRangeFilter()
+    updated_at = django_filters.IsoDateTimeFromToRangeFilter()
+
+    class Meta:
+        model = Document
+        fields = [
+            'id',
+            'name',
+            'folder_id',
             'created_at',
             'updated_at'
         ]

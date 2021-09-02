@@ -13,4 +13,4 @@
     --password="$SUPERUSER_PASSWORD"
 
 # Run uWSGI
-/venv/bin/uwsgi --http-auto-chunked --http-keepalive --static-map /static=/usr/src/app/static
+/venv/bin/uwsgi --http-auto-chunked --http-keepalive

@@ -42,3 +42,39 @@ class Folder(MP_Node):
     class Meta:
         verbose_name = _("Folder")
         verbose_name_plural = _("Folders")
+
+
+class Document(models.Model):
+    """
+    An instance is a document in the document store.
+
+    File assets are stored in S3. The Document model organizes these assets
+    into Folders and Topics.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    name = models.CharField(
+        help_text=_("A short, human-friendly identifier for the document."),
+        max_length=255  # max filename length in Windows & UNIX
+    )
+
+    long_description = models.TextField(
+        help_text=_("A longer description for the document. Optional."),
+        blank=True,
+        default=""
+    )
+
+    file = models.FileField()
+
+    folder = models.ForeignKey(to="documents.Folder", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Document: {self.name}"
+
+    class Meta:
+        verbose_name = _("Document")
+        verbose_name_plural = _("Documents")
