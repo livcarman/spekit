@@ -22,6 +22,7 @@ from documents import views
 router = routers.DefaultRouter()
 router.register(r'folders', views.FolderViewSet)
 router.register(r'documents', views.DocumentViewSet)
+router.register(r'topics', views.TopicViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

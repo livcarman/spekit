@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from documents.models import Document, Folder
+from documents.models import Document, Folder, Topic
 
 
 class FolderSerializer(serializers.ModelSerializer):
@@ -14,6 +14,10 @@ class FolderSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    topics = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Topic.objects.all()
+    )
 
     def validate_parent(self, value):
         if value and self.instance and self.instance.pk and self.instance.pk == value.pk:
@@ -25,6 +29,12 @@ class FolderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         parent = validated_data.pop('get_parent')
+
+        try:
+            topics = validated_data.pop('topics')
+        except KeyError:
+            topics = None
+
         folder = Folder(**validated_data)
 
         if parent:
@@ -37,6 +47,10 @@ class FolderSerializer(serializers.ModelSerializer):
             else:
                 Folder.add_root(instance=folder)
 
+        if topics:
+            folder.topics.set(topics)
+            folder.save()
+
         return folder
 
     def update(self, instance, validated_data):
@@ -44,6 +58,13 @@ class FolderSerializer(serializers.ModelSerializer):
             parent = validated_data.pop('get_parent')
         except KeyError:
             parent = instance.get_parent()
+
+        try:
+            topics = validated_data.pop('topics')
+        except KeyError:
+            topics = instance.topics.all()
+
+        instance.topics.set(topics)
 
         for k, v in validated_data.items():
             setattr(instance, k, v)
@@ -77,6 +98,7 @@ class FolderSerializer(serializers.ModelSerializer):
             'name',
             'long_description',
             'parent',
+            'topics',
             'children',
             'created_at',
             'updated_at'
@@ -87,6 +109,10 @@ class DocumentSerializer(serializers.ModelSerializer):
     folder = serializers.PrimaryKeyRelatedField(
         queryset=Folder.objects.all()
     )
+    topics = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Topic.objects.all()
+    )
 
     class Meta:
         model = Document
@@ -96,6 +122,30 @@ class DocumentSerializer(serializers.ModelSerializer):
             'long_description',
             'folder',
             'file',
+            'topics',
+            'created_at',
+            'updated_at'
+        ]
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    folders = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Folder.objects.all()
+    )
+    documents = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Document.objects.all()
+    )
+
+    class Meta:
+        model = Topic
+        fields = [
+            'id',
+            'name',
+            'long_description',
+            'folders',
+            'documents',
             'created_at',
             'updated_at'
         ]

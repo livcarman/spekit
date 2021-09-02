@@ -78,3 +78,36 @@ class Document(models.Model):
     class Meta:
         verbose_name = _("Document")
         verbose_name_plural = _("Documents")
+
+
+class Topic(models.Model):
+    """
+    An instance is a Topic, a tag for documents and folders.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    name = models.CharField(
+        help_text=_("A short, human-friendly identifier for the topic."),
+        max_length=255  # max filename length in Windows & UNIX
+    )
+
+    long_description = models.TextField(
+        help_text=_("A longer description for the topic. Optional."),
+        blank=True,
+        default=""
+    )
+
+    folders = models.ManyToManyField(to="documents.Folder", related_name="topics")
+
+    documents = models.ManyToManyField(to="documents.Document", related_name="topics")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Topic: {self.name}"
+
+    class Meta:
+        verbose_name = _("Topic")
+        verbose_name_plural = _("Topics")
